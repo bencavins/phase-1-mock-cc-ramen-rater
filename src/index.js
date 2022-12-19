@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', event => {
 });
 
 const menu = document.getElementById('ramen-menu');
+const ramenDetail = document.getElementById('ramen-detail');
 
 const form = document.getElementById('new-ramen');
 form.addEventListener('submit', (event) => {
@@ -16,7 +17,19 @@ function fetchRamen() {
         ramens.forEach(ramen => {
             const ramenImg = document.createElement('img');
             ramenImg.src = ramen.image;
+            ramenImg.addEventListener('click', () => {
+                onRamenClick(ramen);
+            });
             menu.appendChild(ramenImg);
         });
     });
+}
+
+function onRamenClick(ramenData) {
+    const detailImg = document.querySelector('#ramen-detail .detail-image');
+    const detailName = document.querySelector('#ramen-detail .name');
+    const deatilRestaurant = document.querySelector('#ramen-detail .restaurant');
+    detailImg.src = ramenData.image;
+    detailName.textContent = ramenData.name;
+    deatilRestaurant.textContent = ramenData.restaurant;
 }
