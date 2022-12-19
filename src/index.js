@@ -29,7 +29,12 @@ function onRamenClick(ramenData) {
     const detailImg = document.querySelector('#ramen-detail .detail-image');
     const detailName = document.querySelector('#ramen-detail .name');
     const deatilRestaurant = document.querySelector('#ramen-detail .restaurant');
+    const rating = document.getElementById('rating-display');
+    const comment = document.getElementById('comment-display');
+
     detailImg.src = ramenData.image;
     detailName.textContent = ramenData.name;
     deatilRestaurant.textContent = ramenData.restaurant;
+    rating.textContent = ramenData.rating;
+    comment.textContent = ramenData.comment;
 }
