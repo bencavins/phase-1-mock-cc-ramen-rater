@@ -1,55 +1,75 @@
-document.addEventListener('DOMContentLoaded', event => {
-    fetchRamen();
-});
+fetch('http://localhost:3000/ramens')
+    .then(resp => resp.json())
+    .then(allRamens => {
+        renderRamenMenu(allRamens)
+        renderRamen(allRamens[0])
+    })
 
-const menu = document.getElementById('ramen-menu');
-const ramenDetail = document.getElementById('ramen-detail');
-const form = document.getElementById('new-ramen');
+function renderRamenMenu(allRamens) {
+    allRamens.forEach((ramen) => {
+        // loop code
+        const ramenImg = document.createElement('img')
+        ramenImg.src = ramen.image
+        ramenImg.alt = 'Tasty Ramen'
 
-function fetchRamen() {
-    fetch('http://localhost:3000/ramens')
-    .then(response => response.json())
-    .then(ramens => ramens.forEach(ramen => createRamenElement(ramen)));
+        ramenImg.addEventListener('click', (event) => {
+            renderRamen(ramen)
+        })
+
+        document.querySelector('#ramen-menu').append(ramenImg)
+    })
 }
 
-function createRamenElement(ramen) {
-    const ramenImg = document.createElement('img');
-    ramenImg.src = ramen.image;
-    ramenImg.addEventListener('click', () => {
-        onRamenClick(ramen);
-    });
-    menu.appendChild(ramenImg);
+function renderRamen(ramen) {
+    const detailImg = document.querySelector('.detail-image')
+    detailImg.src = ramen.image
+    detailImg.alt = ramen.name
+
+    const detailName = document.querySelector('.name')
+    detailName.textContent = ramen.name
+
+    const restName = document.querySelector('.restaurant')
+    restName.textContent = ramen.restaurant
+
+    const detailRating = document.querySelector('#rating-display')
+    detailRating.textContent = ramen.rating
+
+    const detailComment = document.querySelector('#comment-display')
+    detailComment.textContent = ramen.comment
 }
 
-function onRamenClick(ramenData) {
-    const detailImg = document.querySelector('#ramen-detail .detail-image');
-    const detailName = document.querySelector('#ramen-detail .name');
-    const deatilRestaurant = document.querySelector('#ramen-detail .restaurant');
-    const rating = document.getElementById('rating-display');
-    const comment = document.getElementById('comment-display');
 
-    detailImg.src = ramenData.image;
-    detailName.textContent = ramenData.name;
-    deatilRestaurant.textContent = ramenData.restaurant;
-    rating.textContent = ramenData.rating;
-    comment.textContent = ramenData.comment;
+function setUpRamenForm() {
+    const ramenForm = document.querySelector('#new-ramen')
+    ramenForm.addEventListener('submit', (event) => {
+        event.preventDefault()
+
+        document.querySelector('#new-name').value
+        
+        const newRamen = {
+            "name": event.target.name.value,
+            // "name": document.querySelector('#new-name').value,
+            // "restaurant": event.target.restaurant.value,
+            "image": event.target.image.value,
+            "rating": event.target.rating.value,
+            "comment": event.target["new-comment"].value
+        }
+        
+        renderRamenMenu([newRamen])
+    })
 }
+setUpRamenForm()
 
-form.addEventListener('submit', event => {
-    event.preventDefault();
-    const newName = document.getElementById('new-name').value;
-    const newRestaurant = document.getElementById('new-restaurant').value;
-    const newImage = document.getElementById('new-image').value;
-    const newRating = document.getElementById('new-rating').value;
-    const newComment = document.getElementById('new-comment').value;
+function setUpCommentForm() {
+    const editForm = document.querySelector('#edit-ramen')
+    editForm.addEventListener('submit', (event) => {
+        event.preventDefault()
 
-    createRamenElement({
-        name: newName,
-        restaurant: newRestaurant,
-        image: newImage,
-        rating: newRating,
-        comment: newComment
-    });
+        const newRating = document.querySelector('#new-rating2').value
+        const newComment = document.querySelector('#new-comment2').value
 
-    form.reset();
-});
+        document.querySelector('#rating-display').textContent = newRating
+        document.querySelector('#comment-display').textContent = newComment
+    })
+}
+setUpCommentForm()
