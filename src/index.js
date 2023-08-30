@@ -1,55 +1,51 @@
-document.addEventListener('DOMContentLoaded', event => {
-    fetchRamen();
-});
+const ramenMenu = document.querySelector('#ramen-menu')
+const detailImg = document.querySelector('#detail-image')
+const detailName = document.querySelector('#detail-name')
+const detailRest = document.querySelector('#detail-restaurant')
+const rating = document.querySelector('#rating-display')
+const comment = document.querySelector('#comment-display')
+const newRamenForm = document.querySelector('#new-ramen')
 
-const menu = document.getElementById('ramen-menu');
-const ramenDetail = document.getElementById('ramen-detail');
-const form = document.getElementById('new-ramen');
+fetch('http://localhost:3000/ramens')
+.then(resp => resp.json())
+.then(data => {
+    data.forEach(ramen => {
+        addToMenu(ramen)
+    })
+})
 
-function fetchRamen() {
-    fetch('http://localhost:3000/ramens')
-    .then(response => response.json())
-    .then(ramens => ramens.forEach(ramen => createRamenElement(ramen)));
+function addToMenu(ramen) {
+    const img = document.createElement('img')
+    img.src = ramen.image
+    img.alt = ramen.name
+    ramenMenu.append(img)
+
+    img.addEventListener('click', event => {
+        detailImg.src = ramen.image
+        detailImg.alt = ramen.name
+        detailName.textContent = ramen.name
+        detailRest.textContent = ramen.restaurant
+        rating.textContent = ramen.rating
+        comment.textContent = ramen.comment
+    })
 }
 
-function createRamenElement(ramen) {
-    const ramenImg = document.createElement('img');
-    ramenImg.src = ramen.image;
-    ramenImg.addEventListener('click', () => {
-        onRamenClick(ramen);
-    });
-    menu.appendChild(ramenImg);
-}
+newRamenForm.addEventListener('submit', event => {
+    event.preventDefault()
+    
+    const newName = event.target.name.value
+    const newRest = event.target.restaurant.value
+    const newImg = event.target.image.value
+    const newRating = event.target.rating.value
+    const newComment = event.target['new-comment'].value
 
-function onRamenClick(ramenData) {
-    const detailImg = document.querySelector('#ramen-detail .detail-image');
-    const detailName = document.querySelector('#ramen-detail .name');
-    const deatilRestaurant = document.querySelector('#ramen-detail .restaurant');
-    const rating = document.getElementById('rating-display');
-    const comment = document.getElementById('comment-display');
+    const newRamen = {
+        "name": newName,
+        "restaurant": newRest,
+        "image": newImg,
+        "rating": newRating,
+        "comment": newComment
+    }
 
-    detailImg.src = ramenData.image;
-    detailName.textContent = ramenData.name;
-    deatilRestaurant.textContent = ramenData.restaurant;
-    rating.textContent = ramenData.rating;
-    comment.textContent = ramenData.comment;
-}
-
-form.addEventListener('submit', event => {
-    event.preventDefault();
-    const newName = document.getElementById('new-name').value;
-    const newRestaurant = document.getElementById('new-restaurant').value;
-    const newImage = document.getElementById('new-image').value;
-    const newRating = document.getElementById('new-rating').value;
-    const newComment = document.getElementById('new-comment').value;
-
-    createRamenElement({
-        name: newName,
-        restaurant: newRestaurant,
-        image: newImage,
-        rating: newRating,
-        comment: newComment
-    });
-
-    form.reset();
-});
+    addToMenu(newRamen)
+})
